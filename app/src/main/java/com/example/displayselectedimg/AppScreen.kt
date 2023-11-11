@@ -1,6 +1,7 @@
 package com.example.displayselectedimg
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -24,8 +26,8 @@ import com.example.displayselectedimg.ui.theme.MainVM
 fun AppScreen() {
     // VMを作成する
     val vm = MainVM()
-    // observeAsState()でLiveDataを監視する
-    val uri: Uri? by vm.imgUri.observeAsState(null)
+    // collectAsState()でFlowを監視する
+    val uri: Uri? by vm.imgUri.collectAsState()
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
 
@@ -37,9 +39,10 @@ fun AppScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // 選択した画像を表示する
-        if(uri != null) {
+        uri?.let {
+            Log.d("hoge", "AppScreen() 画像の表示")
             // AsyncImageはcoil-composeライブラリの関数
-            AsyncImage(model = uri.toString(), contentDescription = "selected image")
+            AsyncImage(model = uri.toString(), contentDescription = null)
         }
     }
 }
