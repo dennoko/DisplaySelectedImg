@@ -22,17 +22,23 @@ import com.example.displayselectedimg.ui.theme.MainVM
 
 @Composable
 fun AppScreen() {
-    val vm = remember { MainVM() }
+    // VMを作成する
+    val vm = MainVM()
+    // observeAsState()でLiveDataを監視する
     val uri: Uri? by vm.imgUri.observeAsState(null)
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
+
         Text(text = "This app displays the image you selected from your phone's gallery.")
         Spacer(modifier = Modifier.height(16.dp))
 
+        // 画像を選択するボタン
         ImgSelectButton(vm = vm)
         Spacer(modifier = Modifier.height(16.dp))
 
+        // 選択した画像を表示する
         if(uri != null) {
+            // AsyncImageはcoil-composeライブラリの関数
             AsyncImage(model = uri.toString(), contentDescription = "selected image")
         }
     }
@@ -40,14 +46,17 @@ fun AppScreen() {
 
 @Composable
 fun ImgSelectButton(vm: MainVM) {
+    // rememberLauncherForActivityResult()はregisterForActivityResult()のラッパー関数
     val getContent = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if(uri != null) {
+            // 選択した画像でURIを更新する
             vm.updateImgUri(uri)
         }
     }
 
     Button(
         onClick = {
+            // 画像を選択する
             getContent.launch("image/*")
         }
     ) {

@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MainVM: ViewModel() {
-    // FlowでimgUriを流す
+    // 画像のURIを格納する
     val imgUri = MutableLiveData<Uri>()
 
     // imgUriを更新する
