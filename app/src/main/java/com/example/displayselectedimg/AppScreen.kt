@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -21,11 +22,9 @@ import com.example.displayselectedimg.ui.theme.MainVM
 
 
 @Composable
-fun AppScreen() {
-    // VMを作成する
-    val vm = MainVM()
+fun AppScreen(vm: MainVM) {
     // observeAsState()でLiveDataを監視する
-    val uri: Uri? by vm.imgUri.observeAsState(null)
+    val uri: Uri? by vm.imgUri.collectAsState(null)
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
 
