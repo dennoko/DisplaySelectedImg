@@ -1,6 +1,7 @@
 package com.example.displayselectedimg
 
 import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -23,8 +24,15 @@ import com.example.displayselectedimg.ui.theme.MainVM
 
 @Composable
 fun AppScreen(vm: MainVM) {
-    // observeAsState()でLiveDataを監視する
+    // collectAsState()でLiveDataを監視する
     val uri: Uri? by vm.imgUri.collectAsState(null)
+    // rememberLauncherForActivityResult()はregisterForActivityResult()のラッパー関数
+    val getContent = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        if(uri != null) {
+            // 選択した画像でURIを更新する
+            vm.updateImgUri(uri)
+        }
+    }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
 
@@ -32,7 +40,7 @@ fun AppScreen(vm: MainVM) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // 画像を選択するボタン
-        ImgSelectButton(vm = vm)
+        ImgSelectButton(getContent)
         Spacer(modifier = Modifier.height(16.dp))
 
         // 選択した画像を表示する
@@ -44,15 +52,7 @@ fun AppScreen(vm: MainVM) {
 }
 
 @Composable
-fun ImgSelectButton(vm: MainVM) {
-    // rememberLauncherForActivityResult()はregisterForActivityResult()のラッパー関数
-    val getContent = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        if(uri != null) {
-            // 選択した画像でURIを更新する
-            vm.updateImgUri(uri)
-        }
-    }
-
+fun ImgSelectButton(getContent: ManagedActivityResultLauncher<String, Uri?>) {
     Button(
         onClick = {
             // 画像を選択する
